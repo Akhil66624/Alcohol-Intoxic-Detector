@@ -84,18 +84,7 @@ public final class Logger {
     this.minLogLevel = minLogLevel;
   }
 
-  /**
-   * Return caller's simple name.
-   *
-   * <p>Android getStackTrace() returns an array that looks like this: stackTrace[0]:
-   * dalvik.system.VMStack stackTrace[1]: java.lang.Thread stackTrace[2]:
-   * com.google.android.apps.unveil.env.UnveilLogger stackTrace[3]:
-   * com.google.android.apps.unveil.BaseApplication
-   *
-   * <p>This function returns the simple version of the first non-filtered name.
-   *
-   * @return caller's simple name
-   */
+
   private static String getCallerSimpleName() {
     // Get the current callstack so we can pull the class of the caller off of it.
     final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();

@@ -45,17 +45,12 @@ public abstract class Classifier {
 
   /** The model type used for classification. */
   public enum Model {
-    FLOAT_MOBILENET,
-    QUANTIZED_MOBILENET,
-    FLOAT_EFFICIENTNET,
-    QUANTIZED_EFFICIENTNET
+    QUANTIZED_MOBILENET
   }
 
   /** The runtime device type used for executing classification. */
   public enum Device {
-    CPU,
-    NNAPI,
-    GPU
+    CPU
   }
 
   /** Number of results to show in the UI. */
@@ -75,19 +70,13 @@ public abstract class Classifier {
    * @param activity The current Activity.
    * @param model The model to use for classification.
    * @param device The device to use for classification.
-   * @param numThreads The number of threads to use for classification.
+   * @param numThreads The number of threads to use for classification .
    * @return A classifier with the desired configuration.
    */
   public static Classifier create(Activity activity, Model model, Device device, int numThreads)
       throws IOException {
     if (model == Model.QUANTIZED_MOBILENET) {
       return new ClassifierQuantizedMobileNet(activity, device, numThreads);
-    } else if (model == Model.FLOAT_MOBILENET) {
-      return new ClassifierFloatMobileNet(activity, device, numThreads);
-    } else if (model == Model.FLOAT_EFFICIENTNET) {
-      return new ClassifierFloatEfficientNet(activity, device, numThreads);
-    } else if (model == Model.QUANTIZED_EFFICIENTNET) {
-      return new ClassifierQuantizedEfficientNet(activity, device, numThreads);
     } else {
       throw new UnsupportedOperationException();
     }
@@ -166,16 +155,7 @@ public abstract class Classifier {
   /** Initializes a {@code Classifier}. */
   protected Classifier(Activity activity, Device device, int numThreads) throws IOException {
     BaseOptions.Builder baseOptionsBuilder = BaseOptions.builder();
-    switch (device) {
-      case GPU:
-        baseOptionsBuilder.useGpu();
-        break;
-      case NNAPI:
-        baseOptionsBuilder.useNnapi();
-        break;
-      default:
-        break;
-    }
+
 
     // Create the ImageClassifier instance.
     ImageClassifierOptions options =
@@ -250,12 +230,7 @@ public abstract class Classifier {
     return imageSizeY;
   }
 
-  /**
-   * Converts a list of {@link Classifications} objects into a list of {@link Recognition} objects
-   * to match the interface of other inference method, such as using the <a
-   * href="https://github.com/tensorflow/examples/tree/master/lite/examples/image_classification/android/lib_support">TFLite
-   * Support Library.</a>.
-   */
+
   private static List<Recognition> getRecognitions(List<Classifications> classifications) {
 
     final ArrayList<Recognition> recognitions = new ArrayList<>();

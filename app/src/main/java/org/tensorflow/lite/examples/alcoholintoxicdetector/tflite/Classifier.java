@@ -1,18 +1,3 @@
-/* Copyright 2019 The TensorFlow Authors. All Rights Reserved.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-==============================================================================*/
-
 package org.tensorflow.lite.examples.alcoholintoxicdetector.tflite;
 
 import static java.lang.Math.min;
@@ -54,17 +39,12 @@ public abstract class Classifier {
 
   /** The model type used for classification. */
   public enum Model {
-    FLOAT_MOBILENET,
-    QUANTIZED_MOBILENET,
-    FLOAT_EFFICIENTNET,
-    QUANTIZED_EFFICIENTNET
+    QUANTIZED_MOBILENET
   }
 
   /** The runtime device type used for executing classification. */
   public enum Device {
-    CPU,
-    NNAPI,
-    GPU
+    CPU
   }
 
   /** Number of results to show in the UI. */
@@ -115,13 +95,7 @@ public abstract class Classifier {
       throws IOException {
     if (model == Model.QUANTIZED_MOBILENET) {
       return new ClassifierQuantizedMobileNet(activity, device, numThreads);
-    } else if (model == Model.FLOAT_MOBILENET) {
-      return new ClassifierFloatMobileNet(activity, device, numThreads);
-    } else if (model == Model.FLOAT_EFFICIENTNET) {
-      return new ClassifierFloatEfficientNet(activity, device, numThreads);
-    } else if (model == Model.QUANTIZED_EFFICIENTNET) {
-      return new ClassifierQuantizedEfficientNet(activity, device, numThreads);
-    } else {
+    }else {
       throw new UnsupportedOperationException();
     }
   }
@@ -200,23 +174,7 @@ public abstract class Classifier {
   protected Classifier(Activity activity, Device device, int numThreads) throws IOException {
     MappedByteBuffer tfliteModel = FileUtil.loadMappedFile(activity, getModelPath());
     switch (device) {
-      case NNAPI:
-        nnApiDelegate = new NnApiDelegate();
-        tfliteOptions.addDelegate(nnApiDelegate);
-        break;
-      case GPU:
-        CompatibilityList compatList = new CompatibilityList();
-        if(compatList.isDelegateSupportedOnThisDevice()){
-          // if the device has a supported GPU, add the GPU delegate
-          GpuDelegate.Options delegateOptions = compatList.getBestOptionsForThisDevice();
-          GpuDelegate gpuDelegate = new GpuDelegate(delegateOptions);
-          tfliteOptions.addDelegate(gpuDelegate);
-          Log.d(TAG, "GPU supported. GPU delegate created and added to options");
-        } else {
-          tfliteOptions.setUseXNNPACK(true);
-          Log.d(TAG, "GPU not supported. Default to CPU.");
-        }
-        break;
+
       case CPU:
         tfliteOptions.setUseXNNPACK(true);
         Log.d(TAG, "CPU execution");

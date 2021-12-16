@@ -1,4 +1,4 @@
 0 Alcohol Free
-1 Mildly Drunken
-2 Moderately Drunken
+1 Moderately Drunken
+2 No Face Found
 3 Heavily Drunken
